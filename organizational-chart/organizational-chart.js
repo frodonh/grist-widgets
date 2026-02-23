@@ -343,7 +343,8 @@ grist.onRecords(function (records) {
 	// Chargement de la structure de l'organigramme
 	function populateEntity(node, parent, employees) {
 		for (const rec of employees.filter((emp) => emp["Entité parente"]==parent)) {
-			let current = node[node.push(new Entity(rec["Entité"])) - 1];
+			let el = node.find((e) => (e.name == rec["Entité"]));
+			let current = (el) ? el : node[node.push(new Entity(rec["Entité"])) - 1];
 			let agent = new Agent(mapped["Nom"], mapped["Prénom"], mapped["Email"], mapped["Poste"], mapped["Site"], mapped["Petite photo"], mapped["Grande photo"]);
 			if (rec["Chef"]) {
 				current.head = agent;
