@@ -1,0 +1,24 @@
+{
+	"name": "@frodonh/organizational-chart",
+	"description": "Displays a visual representation of an organizational chart using pure HTML and CSS",
+	"homePage": "https://github.com/frodonh/grist-widgets",
+	"version": "0.1.0",
+	"grist": [
+		{
+			"name": "Organizational chart",
+			"url": "https://frodonh.github.io/grist-widgets/organizational-chart/index.html",
+			"widgetId": "@frodonh/organizational-chart",
+			"published": true,
+			"accessLevel": "read table",
+			"renderAfterReady": true,
+			"description": "Displays a visual representation of an organizational chart, with employees and hierarchical entities",
+			"authors": [
+				{
+					"name": "François Hissel",
+					"url": "https://github.com/frodonh"
+				}
+			],
+			"isGristLabsMaintained": false
+		}
+	]
+}
