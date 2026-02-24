@@ -3,6 +3,19 @@ function filter(row) {
 	return true;
 }
 
+function getAttachmentUrl(field, response) {
+	if (field == null) return null;
+	return `${response.baseUrl}/attachments/${field[0]}/download?auth=${response.token}`;
+}
+
+function ready(fn) {
+  if (document.readyState !== 'loading'){
+    fn();
+  } else {
+    document.addEventListener('DOMContentLoaded', fn);
+  }
+}
+
 function offsetRelative(element,ancestor) {
 	let offsets=[0,0];
 	let cur=element;
@@ -27,67 +40,70 @@ class Agent {
 		this.director = director;
 	}
 
-	to_dom(with_photo) {
+	to_dom() {
 		let poste = document.createElement('div');
 		poste.classList.add('poste');
 		if (this.director) poste.classList.add('chef');
-		if (with_photo) {
+		if (this.small_photo) {
 			let photo = document.createElement('div');
 			photo.classList.add('photo');
 			let figure = document.createElement('figure');
 			let img = document.createElement('img');
+			img.setAttribute('src', this.small_photo);
 			img.addEventListener("error",function() {
 				let pb = this.parentNode.parentNode;
 				pb.parentNode.removeChild(pb);
 			});
-			img.addEventListener("mouseover",function(event) {
-				if (timeoutid != 0) {
-					clearTimeout(timeoutid);
-					timeoutid = 0;
-				}
-				let tt = document.getElementById('orgtooltipid');
-				let imgs = this;
-				let src = this.big_photo;
-				let img = tt.getElementsByTagName('img')[0];
-				img.setAttribute('src',src);
-				timeoutid=setTimeout(function() {
-					let parentorg = document.getElementById('organigramme');
-					tt.style.display = 'block';
-					let offsets = offsetRelative(imgs, parentorg);
-					let offsetX = event.offsetX;
-					let offsetY = event.offsetY;
-					if (offsetX === undefined || (offsetX == 0 && offsetY == 0)) {
-						let rec = event.target.getBoundingClientRect();
-						offsetX = event.clientX - rec.left;
-						offsetY = event.clientY - rec.top;
+			let bphoto = this.big_photo;
+			if (bphoto) {
+				img.addEventListener("mouseover",function(event) {
+					if (timeoutid != 0) {
+						clearTimeout(timeoutid);
+						timeoutid = 0;
 					}
-					let ol = offsets[0] + offsetX + 5;
-					let ot = offsets[1] + offsetY + 5;
-					if (ol+tt.offsetWidth > parentorg.offsetWidth+parentorg.scrollLeft) {
-						ol -= tt.offsetWidth + 10;
-						if (ol < 0) ol = 0;
-					}
-					if (ot+tt.offsetHeight > parentorg.offsetHeight+parentorg.scrollTop) {
-						ot -= tt.offsetHeight + 10;
-						if (ot<0) ot = 0;
-					}
-					tt.style.left = ol.toString()+"px";
-					tt.style.top = ot.toString()+"px";
-				},100);
-			});
-			img.addEventListener("mouseout",function() {
-				if (timeoutid != 0) {
-					clearTimeout(timeoutid);
-					timeoutid = 0;
-				}
-				timeoutid=setTimeout(function() {
 					let tt = document.getElementById('orgtooltipid');
-					tt.style.display = 'none';
+					let imgs = this;
+					let src = bphoto;
 					let img = tt.getElementsByTagName('img')[0];
-					img.setAttribute('src','//:0');
-				},1000);
-			});
-			img.setAttribute('src', this.small_photo);
+					img.setAttribute('src',src);
+					timeoutid=setTimeout(function() {
+						let parentorg = document.getElementById('organigramme');
+						tt.style.display = 'block';
+						let offsets = offsetRelative(imgs, parentorg);
+						let offsetX = event.offsetX;
+						let offsetY = event.offsetY;
+						if (offsetX === undefined || (offsetX == 0 && offsetY == 0)) {
+							let rec = event.target.getBoundingClientRect();
+							offsetX = event.clientX - rec.left;
+							offsetY = event.clientY - rec.top;
+						}
+						let ol = offsets[0] + offsetX + 5;
+						let ot = offsets[1] + offsetY + 5;
+						if (ol+tt.offsetWidth > parentorg.offsetWidth+parentorg.scrollLeft) {
+							ol -= tt.offsetWidth + 10;
+							if (ol < 0) ol = 0;
+						}
+						if (ot+tt.offsetHeight > parentorg.offsetHeight+parentorg.scrollTop) {
+							ot -= tt.offsetHeight + 10;
+							if (ot<0) ot = 0;
+						}
+						tt.style.left = ol.toString()+"px";
+						tt.style.top = ot.toString()+"px";
+					},100);
+				});
+				img.addEventListener("mouseout",function() {
+					if (timeoutid != 0) {
+						clearTimeout(timeoutid);
+						timeoutid = 0;
+					}
+					timeoutid=setTimeout(function() {
+						let tt = document.getElementById('orgtooltipid');
+						tt.style.display = 'none';
+						let img = tt.getElementsByTagName('img')[0];
+						img.setAttribute('src','//:0');
+					},1000);
+				});
+			}
 			figure.appendChild(img);
 			photo.appendChild(figure);
 			poste.appendChild(photo);
@@ -119,7 +135,7 @@ class Entity {
 		this.agents = [];
 	}
 
-	to_dom(level=0, fold_from, with_photo) {
+	to_dom(level=0, fold_from) {
 		// Bloc nom de l'entité
 		let entity = document.createElement('div');
 		entity.classList.add('entite');
@@ -174,16 +190,20 @@ class Entity {
 			shadow.classList.add('shtop');
 			direction.appendChild(shadow);
 		}
-		direction.appendChild(this.head.to_dom(with_photo));
-		for (let a of this.deputy) direction.appendChild(a.to_dom(with_photo));
+		if (this.head) direction.appendChild(this.head.to_dom());
+		for (let a of this.deputy) direction.appendChild(a.to_dom());
 		entity.appendChild(direction);
-		// Bloc singleton
-		if (this.singles.length > 0) {
-			let singletons = document.createElement('div');
+		// Création des blocs singletons si nécessaire
+		let singletons = null;
+		if (this.singles.length > 0 || (this.agents.length >0 && this.children.length > 0)) {
+			singletons = document.createElement('div');
 			singletons.classList.add('singletons');
 			let shadow = document.createElement('div');
 			shadow.classList.add('shadow');
 			singletons.appendChild(shadow);
+		}
+		// Blocs singletons
+		if (this.singles.length > 0) {
 			for (let i=0; i<this.singles.length; ++i) {
 				let singletonb = document.createElement('div');
 				singletonb.classList.add('singletonb');
@@ -195,11 +215,40 @@ class Entity {
 				let shad = document.createElement('div');
 				shad.classList.add('shadow');
 				singleton.appendChild(shad);
-				singleton.appendChild(this.singles[i].to_dom(with_photo));
+				singleton.appendChild(this.singles[i].to_dom());
 				singletonb.appendChild(singleton);
 				singletons.appendChild(singletonb);
 			}
 			entity.appendChild(singletons);
+		}
+		// Bloc agents directements rattachés
+		if (this.agents.length > 0 && this.children.length > 0) {
+			let singletonb = document.createElement('div');
+			singletonb.classList.add('singletonb');
+			let shadd = document.createElement('div');
+			shadd.classList.add('shadow');
+			singletonb.appendChild(shadd);
+			let singleton = document.createElement('div');
+			singleton.classList.add('singleton');
+			let shad = document.createElement('div');
+			shad.classList.add('shadow');
+			singleton.appendChild(shad);
+			let bloc = document.createElement('div');
+			bloc.classList.add('bloc');
+			let shadow = document.createElement('div');
+			shadow.classList.add('shadow');
+			bloc.appendChild(shadow);
+			let cont = document.createElement('div');
+			cont.classList.add('contenu');
+			this.agents.sort((a,b) => {return (a.name<b.name) ? -1 : (a.name==b.name?0:1);});
+			for (let a of this.agents) cont.appendChild(a.to_dom());
+			bloc.appendChild(cont);
+			let contenu = document.createElement('div');
+			contenu.classList.add('contenu');
+			contenu.appendChild(bloc);
+			singleton.appendChild(contenu);
+			singletonb.appendChild(singleton);
+			singletons.appendChild(singletonb);
 		}
 		// Bloc contenu
 		let contenu = document.createElement('div');
@@ -210,167 +259,143 @@ class Entity {
 			let shadow = document.createElement('div');
 			shadow.classList.add('shadow');
 			bloc.appendChild(shadow);
-			let intitule = document.createElement('div');
-			intitule.classList.add('intitule');
-			intitule.innerText = 'Chargés de mission';
-			bloc.appendChild(intitule);
+			//let intitule = document.createElement('div');
+			//intitule.classList.add('intitule');
+			//intitule.innerText = 'Chargés de mission';
+			//bloc.appendChild(intitule);
 			let cont = document.createElement('div');
 			cont.classList.add('contenu');
 			this.agents.sort((a,b) => {return (a.name<b.name) ? -1 : (a.name==b.name?0:1);});
-			for (let a of this.agents) cont.appendChild(a.to_dom(with_photo));
+			for (let a of this.agents) cont.appendChild(a.to_dom());
 			bloc.appendChild(cont);
 			contenu.appendChild(bloc);
 		} else {
-			for (let a of this.children) contenu.insertBefore(a.to_dom(level+1,fold_from,with_photo), null);
+			for (let a of this.children) contenu.insertBefore(a.to_dom(level+1,fold_from), null);
 		}
 		entity.appendChild(contenu);
 		return entity;
 	}
 }
 
-function populate_chart(xhttp, node) {
-	// Chargement de la structure de l'organigramme
-	if (xhttp.status!=200) return;
-	let main=[];
-	let data=xhttp.responseText.split('\n');
-	for (let i=1;i<data.length;++i) {
-		if (data[i].length==0) continue;
-		let row=data[i].split('\t');
-		if (!filter(row)) continue;
-		let agent=new Agent(row[1],row[2],row[6],row[7],row[0],null);
-		let current=null;
-		for (let j=3;j<6;++j) {
-			let ch=(current==null)?main:current.children;
-			if (row.length>j && row[j]!='') {
-				let el=ch.find((e) => {return e.name==row[j]});
-				if (!el) {
-					current=ch[ch.push(new Entity(row[j]))-1];
+ready(function() {
+	grist.ready({requiredAccess: 'read table', columns: [
+		{
+			name: "nom",
+			title: "Nom de l'employé",
+			type: "Text",
+			optional: false,
+			allowMultiple: false
+		},
+		{
+			name: "prenom",
+			title: "Prénom de l'employé",
+			type: "Text",
+			optional: false,
+			allowMultiple: false
+		},
+		{
+			name: "email",
+			title: "Email de l'employé",
+			type: "Text",
+			optional: true
+		},
+		{
+			name: "poste",
+			title: "Intitulé du poste",
+			type: "Text",
+			optional: true
+		},
+		{
+			name: "site",
+			title: "Lieu de travail",
+			type: "Text",
+			optional: true
+		},
+		{
+			name: "entite",
+			title: "Entité à laquelle appartient l'employé",
+			type: "Ref",
+			optional: false,
+			allowMultiple: false
+		},
+		{
+			name: "parent",
+			title: "Entité supérieure de celle à laquelle appartient l'employé",
+			type: "Ref",
+			optional: false,
+			allowMultiple: false
+		},
+		{
+			name: "position",
+			title: "Indique si l'employé est chef, adjoint ou singleton dans son entité",
+			description: "Valeurs possibles : ['Chef', 'Adjoint', 'Singleton']",
+			type: "Text",
+			optional: false,
+			allowMultiple: false
+		},
+		{
+			name: "petite_photo",
+			title: "URL d'une photo miniature",
+			type: "Attachments",
+			optional: true
+		},
+		{
+			name: "grande_photo",
+			title: "URL d'une grande photo",
+			type: "Attachments",
+			optional: true
+		}
+	]});
+
+	grist.onRecord(function(record) {
+	});
+
+	grist.onRecords(function (records, mappings) {
+		// Chargement de la structure de l'organigramme
+		function populateEntity(node, parent, employees, response) {
+			const subset = employees.filter((emp) => emp.parent==parent);
+			for (const rec of subset) {
+				let el = node.find((e) => (e.name == rec.entite));
+				let current = null;
+				if (el) {
+					current = el;
 				} else {
-					current=el;
+					current = node[node.push(new Entity(rec.entite)) - 1];
+					populateEntity(current.children, rec.entite, employees, response);
 				}
-			} else break;
+				let agent = new Agent(rec.nom, rec.prenom, rec.email, rec.poste, rec.site, getAttachmentUrl(rec.petite_photo, response), getAttachmentUrl(rec.grande_photo, response));
+				if (rec.position == "Chef") {
+					current.head = agent;
+					agent.director = true;
+				} else if (rec.position == "Adjoint") {
+					current.deputy.push(agent);
+					agent.director = true;
+				} else if (rec.position == "Singleton") {
+					current.singles.push(agent);
+					agent.director = true;
+				} else current.agents.push(agent);
+			}
 		}
-		if (row.length>8 && row[8]=='C') {
-			current.head=agent;
-			agent.director=true;
-		} else if (row.length>8 && row[8]=='CA') {
-			current.deputy.push(agent);
-			agent.director=true;
-		} else if (row.length>8 && row[8]=='S') {
-			current.singles.push(agent);
-			agent.director=true;
-		} else current.agents.push(agent);
-	}
-	// Génération du DOM
-	let tooltip=document.createElement('div');
-	tooltip.id='orgtooltipid';
-	let timg=document.createElement('img');
-	timg.setAttribute('src','//:0');
-	tooltip.appendChild(timg);
-	node.appendChild(tooltip);
-	for (let entity of main) node.appendChild(entity.to_dom(0,1,true));
-}
 
-grist.ready({columns: [
-	{
-		name: "Nom",
-		description: "Nom de l'employé",
-		type: "Text"
-	},
-	{
-		name: "Prénom",
-		description: "Prénom de l'employé",
-		type: "Text"
-	},
-	{
-		name: "Email",
-		description: "Email de l'employé",
-		type: "Text",
-		optional: true
-	},
-	{
-		name: "Site",
-		description: "Lieu de travail de l'employé",
-		type: "Text",
-		optional: true
-	},
-	{
-		name: "Poste",
-		description: "Intitulé du poste",
-		type: "Text",
-		optional: true
-	},
-	{
-		name: "Entité",
-		description: "Entité à laquelle appartient l'employé",
-		type: "Text"
-	},
-	{
-		name: "Entité parente",
-		description: "Entité supérieure de celle à laquelle appartient l'employé",
-		type: "Text"
-	},
-	{
-		name: "Chef",
-		description: "Indique si l'employé est responsable de son entité",
-		type: "Bool"
-	},
-	{
-		name: "Adjoint",
-		description: "Indique si l'employé est responsable adjoint de son entité",
-		type: "Bool"
-	},
-	{
-		name: "Singleton",
-		description: "Indique si l'employé est rattaché au chef d'entité sans être rattaché à une sous-entité",
-		type: "Bool"
-	},
-	{
-		name: "Petite photo",
-		description: "URL d'une photo miniature",
-		type: "Text",
-		optional: true
-	},
-	{
-		name: "Grande photo",
-		description: "URL d'une grande photo",
-		type: "Text",
-		optional: true
-	}
-]});
+		let main = [];
+		let recs = records.map((rec) => grist.mapColumnNames(rec)).filter(filter);
+		grist.docApi.getAccessToken({readOnly: true}).then(response => {
+			populateEntity(main, "", recs, response);
 
-grist.onRecords(function (records) {
-	// Chargement de la structure de l'organigramme
-	function populateEntity(node, parent, employees) {
-		for (const rec of employees.filter((emp) => emp["Entité parente"]==parent)) {
-			let el = node.find((e) => (e.name == rec["Entité"]));
-			let current = (el) ? el : node[node.push(new Entity(rec["Entité"])) - 1];
-			let agent = new Agent(mapped["Nom"], mapped["Prénom"], mapped["Email"], mapped["Poste"], mapped["Site"], mapped["Petite photo"], mapped["Grande photo"]);
-			if (rec["Chef"]) {
-				current.head = agent;
-				agent.director = true;
-			} else if (rec["Adjoint"]) {
-				current.deputy.push(agent);
-				agent.director = true;
-			} else if (rec["Singleton"]) {
-				current.singles.push(agent);
-				agent.director = true;
-			} else current.agents.push(agent);
-			populateEntity(current.children, rec["Entité"], employees);
-		}
-	}
+			// Génération du DOM
+			let tooltip = document.createElement('div');
+			tooltip.id = 'orgtooltipid';
+			let timg = document.createElement('img');
+			timg.setAttribute('src','//:0');
+			tooltip.appendChild(timg);
+			let node = document.getElementById("organigramme");
+			node.innerHTML = "";
+			node.appendChild(tooltip);
+			for (let entity of main) node.appendChild(entity.to_dom(0, 1));
+		});
+	});
 
-	let main = [];
-	let recs = records.map((rec) => grist.mapColumnNames(rec)).filter(filter);
-	populateEntity(main, "", recs);
-
-	// Génération du DOM
-	let tooltip = document.createElement('div');
-	tooltip.id = 'orgtooltipid';
-	let timg = document.createElement('img');
-	timg.setAttribute('src','//:0');
-	tooltip.appendChild(timg);
-	node.appendChild(tooltip);
-	let node = document.getElementById("organigramme");
-	for (let entity of main) node.appendChild(entity.to_dom(0, 1, true));
+	grist.onOptions((options) => {
+		document.getElementById('Titre').innerHTML = options.titre || "Organigramme";
+	});
 });

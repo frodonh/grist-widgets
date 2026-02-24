@@ -126,6 +126,11 @@
         width: 30em; }
         #organigramme .singletons > .singletonb > .singleton > .shadow {
           position: absolute; }
+        #organigramme .singletons > .singletonb > .singleton > .contenu > .bloc > .contenu {
+          width: 100%;
+          margin-top: -1px;
+          border: 1px solid #006666; 
+		}
       #organigramme .singletons > .singletonb > .shadow {
         position: absolute;
         bottom: 100%;
