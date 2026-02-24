@@ -2,226 +2,263 @@
 #orgtooltipid {
   position: absolute;
   display: none;
-  box-shadow: 5px 5px 10px #000;
-  z-index: 10; }
-  #orgtooltipid img {
-    max-width: 30em;
-    vertical-align: middle;
-    margin: 0; }
+  box-shadow: 5px 5px 10px #000000;
+  z-index: 10;
+}
+#orgtooltipid img {
+  max-width: 30em;
+  vertical-align: middle;
+  margin: 0;
+}
 
 #organigramme {
   font-size: 14px;
   position: relative;
   margin: auto;
-  width: -moz-fit-content;
   width: fit-content;
-  height: fit-content; }
-  #organigramme * {
-    box-sizing: border-box; }
-  #organigramme .entite {
-    position: relative;
-    width: -moz-fit-content;
-    width: fit-content;
-    margin: 2em 1em 0 1em; }
-    #organigramme .entite > .nom {
-      text-align: center;
-      background-color: #9bbb59;
-      border: 1px solid #006666;
-      color: #fff;
-      padding: 0.5em 1.5em;
-      font-weight: bold;
-      width: 30em;
-      margin-left: auto;
-      margin-right: auto;
-      position: relative; }
-      #organigramme .entite > .nom > .button {
-        width: 1.4em;
-        height: 1.2em; }
-      #organigramme .entite > .nom > .button.fold {
-        right: 0.2em;
-        top: 0.1em; }
-        #organigramme .entite > .nom > .button.fold a::before {
-          content: "▲"; }
-      #organigramme .entite > .nom > .button.zoom {
-        left: 0.2em;
-        top: 0.1em; }
-        #organigramme .entite > .nom > .button.zoom a::before {
-          content: "+"; }
-    #organigramme .entite > .direction {
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 1em;
-      width: 30em;
-      position: relative; }
-      #organigramme .entite > .direction > .shtop {
-        position: absolute;
-        top: 100%;
-        right: 50%;
-        height: 1em;
-        width: 1px;
-        border-right: 1px solid #006666; }
-    #organigramme .entite > .contenu {
-      margin: 0;
-      position: relative;
-      display: flex;
-      flex-flow: row nowrap;
-      flex: auto;
-      width: -moz-fit-content;
-      width: fit-content; }
-      #organigramme .entite > .contenu > .bloc {
-        margin: 1em 0;
-        width: 30em;
-        position: relative; }
-        #organigramme .entite > .contenu > .bloc > .intitule {
-          width: 100%;
-          text-align: center;
-          background-color: #4aabc5;
-          border: 1px solid #006666;
-          color: #fff;
-          padding: 0.5em 0.1em;
-          font-weight: bold; }
-        #organigramme .entite > .contenu > .bloc > .contenu {
-          width: 100%;
-          margin-top: -1px;
-          border: 1px solid #006666; }
-        #organigramme .entite > .contenu > .bloc > .shadow {
-          position: absolute;
-          right: 50%;
-          bottom: 100%;
-          width: 1px;
-          height: 1em;
-          border-right: 1px solid #006666; }
-    #organigramme .entite > .shbottom {
-      position: absolute;
-      bottom: 100%;
-      width: calc(50% + 1em);
-      height: 2em;
-      border-top: 1px solid #006666; }
-      #organigramme .entite > .shbottom.left {
-        right: 50%;
-        border-right: 1px solid #006666; }
-      #organigramme .entite > .shbottom.right {
-        left: 50%; }
-    #organigramme .entite:first-of-type > .shbottom.left, #organigramme .entite:last-of-type > .shbottom.right {
-      border-top-style: none; }
-  #organigramme .singletons {
-    width: 100%;
-    display: flex;
-    flex-flow: row wrap;
-    flex: auto;
-    position: relative; }
-    #organigramme .singletons > .shadow {
-      position: absolute;
-      width: 1px;
-      height: 100%;
-      right: 50%;
-      border-right: 1px solid #006666; }
-    #organigramme .singletons > .singletonb {
-      width: 50%;
-      position: relative;
-      margin-top: 1em;
-      margin-bottom: 1em; }
-      #organigramme .singletons > .singletonb > .singleton {
-        margin: 0;
-        width: 30em; }
-        #organigramme .singletons > .singletonb > .singleton > .shadow {
-          position: absolute; }
-        #organigramme .singletons > .singletonb > .singleton > .contenu > .bloc > .contenu {
-          width: 100%;
-          margin-top: -1px;
-          border: 1px solid #006666; 
-		}
-      #organigramme .singletons > .singletonb > .shadow {
-        position: absolute;
-        bottom: 100%;
-        border-top: 1px solid #006666;
-        width: calc(100% - 1em - 15em);
-        height: 1em; }
-      #organigramme .singletons > .singletonb:nth-of-type(odd) > .shadow {
-        right: calc(1em + 15em);
-        border-right: 1px solid #006666; }
-      #organigramme .singletons > .singletonb:nth-of-type(odd) > .singleton {
-        margin-left: auto;
-        margin-right: 1em; }
-      #organigramme .singletons > .singletonb:nth-of-type(even) > .shadow {
-        left: calc(1em + 15em);
-        border-left: 1px solid #006666; }
-      #organigramme .singletons > .singletonb:nth-of-type(even) > .singleton {
-        margin-left: 1em; }
-  #organigramme .entite .entite > .nom {
-    background-color: #e36b09; }
-  #organigramme .entite .entite .entite > .nom {
-    background-color: #4e80bc; }
-  #organigramme .entite.folded > .nom > .button.fold > a::before {
-    content: "▼"; }
-  #organigramme .entite.folded > .direction > .shtop {
-    display: none; }
-  #organigramme .entite.folded > .singletons {
-    display: none; }
-  #organigramme .entite.folded > .contenu {
-    display: none; }
-  #organigramme .entite.zoomed > .nom > .button.zoom > a::before {
-    content: "-"; }
-  #organigramme .entite.hidden > .shbottom, #organigramme .entite.hidden > .nom, #organigramme .entite.hidden > .direction, #organigramme .entite.hidden > .singletons, #organigramme .entite.hidden > .contenu > .entite:not(.zoomed):not(.hidden), #organigramme .entite.hidden > .contenu > .entite.zoomed > .shbottom {
-    display: none; }
-  #organigramme .poste {
-    margin: 0.8em 0;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center; }
-    #organigramme .poste .agent {
-      color: #000; }
-    #organigramme .poste > .photo {
-      flex: 0 0 20%; }
-      #organigramme .poste > .photo figure {
-        flex: 1;
-        margin: 0;
-        display: flex;
-        flex-flow: column nowrap;
-        overflow: hidden;
-        position: relative; }
-      #organigramme .poste > .photo img {
-        margin: auto;
-        width: 4em;
-        height: 4em;
-        border-radius: 2em;
-        object-fit: cover;
-        object-position: center center; }
-    #organigramme .poste > .bloc {
-      flex: 1 0 80%; }
-      #organigramme .poste > .bloc > .intitule {
-        text-align: center;
-        color: #000;
-        font-weight: normal; }
-      #organigramme .poste > .bloc > .agent {
-        text-align: center;
-        font-weight: bold; }
-        #organigramme .poste > .bloc > .agent[data-origin="MNHN"], #organigramme .poste > .bloc > .agent[data-origin="IRD"] {
-          color: #ff0000; }
-        #organigramme .poste > .bloc > .agent[data-status="HP"] {
-          color: #ff00ff; }
-    #organigramme .poste.chef {
-      margin: -1px 0 0 0;
-      font-weight: bold;
-      border: 1px solid #006666; }
-      #organigramme .poste.chef > .bloc > .intitule {
-        background-color: #4aabc5;
-        border-left: 1px solid #006666;
-        border-bottom: 1px solid #006666;
-        color: #fff;
-        padding: 0.5em 0.1em; }
-      #organigramme .poste.chef > .bloc > .agent {
-        background-color: #fff;
-        border-left: 1px solid #006666;
-        padding: 0.5em 0.1em; }
-  #organigramme .button {
-    position: absolute;
-    border: 1px solid white;
-    border-radius: 0.2em;
-    text-align: center; }
-    #organigramme .button:hover {
-      box-shadow: 2px 2px 4px 2px gray; }
-    #organigramme .button a {
-      text-decoration: none;
-      color: white;
-      padding: 0.1em; }
+  height: fit-content;
+}
+#organigramme * {
+  box-sizing: border-box;
+}
+#organigramme .entite {
+  position: relative;
+  width: fit-content;
+  margin: 2em 1em 0 1em;
+}
+#organigramme .entite > .nom {
+  text-align: center;
+  background-color: #9bbb59;
+  border: 1px solid #006666;
+  color: #ffffff;
+  padding: 0.5em 1.5em;
+  font-weight: bold;
+  width: 30em;
+  margin: 0 auto;
+  position: relative;
+}
+#organigramme .entite > .nom .button {
+  position: absolute;
+  width: 1.5em;
+  height: 1.5em;
+  border: 1px solid #ffffff;
+  border-radius: 0.2em;
+  text-align: center;
+}
+#organigramme .entite > .nom .button:hover {
+  box-shadow: 2px 2px 4px 2px gray;
+  background-color: #ffffff;
+}
+#organigramme .entite > .nom .button:hover a {
+  color: #9bbb59;
+}
+#organigramme .entite > .nom .button a {
+  text-decoration: none;
+  color: #ffffff;
+  padding: 0.1em;
+}
+#organigramme .entite > .nom .button.fold {
+  right: 0.2em;
+  top: 0.1em;
+}
+#organigramme .entite > .nom .button.fold a::before {
+  content: "▲";
+}
+#organigramme .entite > .nom .button.zoom {
+  left: 0.2em;
+  top: 0.1em;
+}
+#organigramme .entite > .nom .button.zoom a::before {
+  content: "+";
+}
+#organigramme .entite .entite > .nom {
+  background-color: #e36b09;
+}
+#organigramme .entite .entite > .nom .button:hover a {
+  color: #e36b09;
+}
+#organigramme .entite .entite .entite > .nom {
+  background-color: #4e80bc;
+}
+#organigramme .entite .entite .entite > .nom .button:hover a {
+  color: #4e80bc;
+}
+#organigramme .entite > .direction {
+  margin: 0 auto 1em auto;
+  width: 30em;
+  position: relative;
+}
+#organigramme .entite > .direction .shtop {
+  position: absolute;
+  width: 1px;
+  height: 1em;
+  right: 50%;
+  border-right: 1px solid #006666;
+  top: 100%;
+}
+#organigramme .entite > .contenu {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 0;
+  width: fit-content;
+}
+#organigramme .entite > .contenu > .bloc {
+  margin: 1em 0;
+  width: 30em;
+  position: relative;
+}
+#organigramme .entite > .contenu > .bloc > .intitule {
+  background-color: #4aabc5;
+  border: 1px solid #006666;
+  color: #ffffff;
+  text-align: center;
+  padding: 0.5em 0.1em;
+  font-weight: bold;
+}
+#organigramme .entite > .contenu > .bloc > .contenu {
+  width: 100%;
+  margin-top: -1px;
+  border: 1px solid #006666;
+}
+#organigramme .entite > .contenu > .bloc > .shadow {
+  position: absolute;
+  width: 1px;
+  height: 1em;
+  right: 50%;
+  border-right: 1px solid #006666;
+  bottom: 100%;
+}
+#organigramme .entite > .shbottom {
+  position: absolute;
+  bottom: 100%;
+  width: calc(50% + 1em);
+  height: 2em;
+  border-top: 1px solid #006666;
+}
+#organigramme .entite > .shbottom.left {
+  right: 50%;
+  border-right: 1px solid #006666;
+}
+#organigramme .entite > .shbottom.right {
+  left: 50%;
+}
+#organigramme .entite:first-of-type > .shbottom.left, #organigramme .entite:last-of-type > .shbottom.right {
+  border-top-style: none;
+}
+#organigramme .entite.folded > .nom > .button.fold a::before {
+  content: "▼";
+}
+#organigramme .entite.folded > .direction > .shtop, #organigramme .entite.folded > .singletons, #organigramme .entite.folded > .contenu {
+  display: none;
+}
+#organigramme .entite.zoomed > .nom > .button.zoom a::before {
+  content: "-";
+}
+#organigramme .entite.hidden > .shbottom, #organigramme .entite.hidden > .nom, #organigramme .entite.hidden > .direction, #organigramme .entite.hidden > .singletons,
+#organigramme .entite.hidden > .contenu > .entite:not(.zoomed):not(.hidden),
+#organigramme .entite.hidden > .contenu > .entite.zoomed > .shbottom {
+  display: none;
+}
+#organigramme .singletons {
+  display: flex;
+  flex-flow: row wrap;
+  position: relative;
+  width: 100%;
+}
+#organigramme .singletons > .shadow {
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  right: 50%;
+  border-right: 1px solid #006666;
+}
+#organigramme .singletons .singletonb {
+  width: 50%;
+  position: relative;
+  margin: 1em 0;
+}
+#organigramme .singletons .singletonb .singleton {
+  width: 30em;
+  margin: 0;
+}
+#organigramme .singletons .singletonb .singleton .contenu > .bloc > .contenu {
+  border: 1px solid #006666;
+  margin-top: -1px;
+}
+#organigramme .singletons .singletonb .shadow {
+  position: absolute;
+  bottom: 100%;
+  border-top: 1px solid #006666;
+  width: calc(100% - 1em - 30em / 2);
+  height: 1em;
+}
+#organigramme .singletons .singletonb:nth-of-type(odd) .shadow {
+  right: calc(1em + 30em / 2);
+  border-right: 1px solid #006666;
+}
+#organigramme .singletons .singletonb:nth-of-type(odd) .singleton {
+  margin: 0 1em 0 auto;
+}
+#organigramme .singletons .singletonb:nth-of-type(even) .shadow {
+  left: calc(1em + 30em / 2);
+  border-left: 1px solid #006666;
+}
+#organigramme .singletons .singletonb:nth-of-type(even) .singleton {
+  margin-left: 1em;
+}
+#organigramme .poste {
+  display: flex;
+  align-items: center;
+  margin: 0.8em 0;
+}
+#organigramme .poste .photo {
+  flex: 0 0 20%;
+}
+#organigramme .poste .photo figure {
+  flex: 1;
+  margin: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow: hidden;
+  position: relative;
+}
+#organigramme .poste .photo img {
+  width: 4em;
+  height: 4em;
+  border-radius: 2em;
+  margin: auto;
+  object-position: center center;
+  object-fit: cover;
+}
+#organigramme .poste .bloc {
+  flex: 1;
+}
+#organigramme .poste .bloc .intitule {
+  text-align: center;
+}
+#organigramme .poste .bloc .agent {
+  text-align: center;
+  font-weight: bold;
+}
+#organigramme .poste .bloc .agent[data-origin=MNHN], #organigramme .poste .bloc .agent[data-origin=IRD] {
+  color: #ff0000;
+}
+#organigramme .poste .bloc .agent[data-status=HP] {
+  color: #ff00ff;
+}
+#organigramme .poste.chef {
+  border: 1px solid #006666;
+  margin: -1px 0 0 0;
+}
+#organigramme .poste.chef .bloc > .intitule {
+  background-color: #4aabc5;
+  color: #ffffff;
+  border-left: 1px solid #006666;
+  border-bottom: 1px solid #006666;
+  padding: 0.5em;
+}
+#organigramme .poste.chef .bloc > .agent {
+  background: #ffffff;
+  border-left: 1px solid #006666;
+  padding: 0.5em;
+}

@@ -1,0 +1,270 @@
+@use "sass:map";
+
+// --- 1. Variables & Configuration ---
+$colors: (
+  "primary":   #9bbb59, // Vert (Niveau 1)
+  "secondary": #4aabc5, // Bleu ciel (Blocs/Chefs)
+  "accent":    #e36b09, // Orange (Niveau 2)
+  "deep":      #4e80bc, // Bleu foncé (Niveau 3)
+  "border":    #006666,
+  "text":      #ffffff,
+  "shadow":    #000000
+);
+
+$node-width: 30em;
+$connector-thickness: 1px;
+
+// Fonction utilitaire pour récupérer les couleurs
+@function clr($key) {
+  @return map.get($colors, $key);
+}
+
+// --- 2. Mixins (Outils de génération) ---
+
+// Pour les traits verticaux de connexion
+@mixin vertical-line($height, $top: null, $bottom: null) {
+  position: absolute;
+  width: $connector-thickness;
+  height: $height;
+  right: 50%;
+  border-right: $connector-thickness solid clr("border");
+  @if $top { top: $top; }
+  @if $bottom { bottom: $bottom; }
+}
+
+// Pour les boutons (+ / - / ▲)
+@mixin icon-button($char) {
+  a::before {
+    content: $char;
+  }
+}
+
+// --- 3. Styles Principaux ---
+
+#orgtooltipid {
+  position: absolute;
+  display: none;
+  box-shadow: 5px 5px 10px clr("shadow");
+  z-index: 10;
+  
+  img {
+    max-width: $node-width;
+    vertical-align: middle;
+    margin: 0;
+  }
+}
+
+#organigramme {
+  font-size: 14px;
+  position: relative;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+
+  * { box-sizing: border-box; }
+
+  .entite {
+    position: relative;
+    width: fit-content;
+    margin: 2em 1em 0 1em;
+
+    > .nom {
+      text-align: center;
+      background-color: clr("primary");
+      border: 1px solid clr("border");
+      color: clr("text");
+      padding: 0.5em 1.5em;
+      font-weight: bold;
+      width: $node-width;
+      margin: 0 auto;
+      position: relative;
+
+      .button {
+        position: absolute;
+        width: 1.5em;
+        height: 1.5em;
+        border: 1px solid clr("text");
+        border-radius: 0.2em;
+        text-align: center;
+        
+        &:hover { 
+          box-shadow: 2px 2px 4px 2px gray; 
+          background-color: clr("text");
+          a {color: clr("primary");}
+        }
+        a { text-decoration: none; color: clr("text"); padding: 0.1em; }
+
+        &.fold { right: 0.2em; top: 0.1em; @include icon-button("▲"); }
+        &.zoom { left: 0.2em; top: 0.1em; @include icon-button("+"); }
+      }
+    }
+
+    // Gestion de la hiérarchie des couleurs
+    .entite > .nom { 
+      background-color: clr("accent"); 
+      .button:hover a {color: clr("accent");}
+    }
+    .entite .entite > .nom { 
+      background-color: clr("deep"); 
+      .button:hover a {color: clr("deep");}
+    }
+
+    > .direction {
+      margin: 0 auto 1em auto;
+      width: $node-width;
+      position: relative;
+      .shtop { @include vertical-line(1em, $top: 100%); }
+    }
+
+    > .contenu {
+      display: flex;
+      flex-flow: row nowrap;
+      margin: 0;
+      width: fit-content;
+
+      > .bloc {
+        margin: 1em 0;
+        width: $node-width;
+        position: relative;
+
+        > .intitule {
+          background-color: clr("secondary");
+          border: 1px solid clr("border");
+          color: clr("text");
+          text-align: center;
+          padding: 0.5em 0.1em;
+          font-weight: bold;
+        }
+
+        > .contenu {
+          width: 100%;
+          margin-top: -1px;
+          border: 1px solid clr("border");
+        }
+
+        > .shadow { @include vertical-line(1em, $bottom: 100%); }
+      }
+    }
+
+    // Connecteurs horizontaux
+    > .shbottom {
+      position: absolute;
+      bottom: 100%;
+      width: calc(50% + 1em);
+      height: 2em;
+      border-top: $connector-thickness solid clr("border");
+
+      &.left { right: 50%; border-right: $connector-thickness solid clr("border"); }
+      &.right { left: 50%; }
+    }
+
+    &:first-of-type > .shbottom.left,
+    &:last-of-type > .shbottom.right { border-top-style: none; }
+  }
+
+  // --- 4. États Dynamiques ---
+  .entite {
+    &.folded {
+      > .nom > .button.fold { @include icon-button("▼"); }
+      > .direction > .shtop, > .singletons, > .contenu { display: none; }
+    }
+    &.zoomed {
+      > .nom > .button.zoom { @include icon-button("-"); }
+    }
+    &.hidden {
+      > .shbottom, > .nom, > .direction, > .singletons,
+      > .contenu > .entite:not(.zoomed):not(.hidden),
+      > .contenu > .entite.zoomed > .shbottom { display: none; }
+    }
+  }
+
+  // --- 5. Singletons & Postes ---
+  .singletons {
+    display: flex;
+    flex-flow: row wrap;
+    position: relative;
+    width: 100%;
+
+    > .shadow { @include vertical-line(100%); }
+
+    .singletonb {
+      width: 50%;
+      position: relative;
+      margin: 1em 0;
+
+      .singleton {
+        width: $node-width;
+        margin: 0;
+        .contenu > .bloc > .contenu { border: 1px solid clr("border"); margin-top: -1px; }
+      }
+
+      .shadow {
+        position: absolute;
+        bottom: 100%;
+        border-top: $connector-thickness solid clr("border");
+        width: calc(100% - 1em - (#{$node-width} / 2));
+        height: 1em;
+      }
+
+      &:nth-of-type(odd) {
+        .shadow { right: calc(1em + (#{$node-width} / 2)); border-right: $connector-thickness solid clr("border"); }
+        .singleton { margin: 0 1em 0 auto; }
+      }
+
+      &:nth-of-type(even) {
+        .shadow { left: calc(1em + (#{$node-width} / 2)); border-left: $connector-thickness solid clr("border"); }
+        .singleton { margin-left: 1em; }
+      }
+    }
+  }
+
+  .poste {
+    display: flex;
+    align-items: center;
+    margin: 0.8em 0;
+
+    .photo {
+      flex: 0 0 20%;
+
+      figure {
+        flex: 1;
+        margin: 0;
+        display: flex;
+        flex-flow: column nowrap;
+        overflow: hidden;
+        position: relative;
+      }
+
+      img {
+        width: 4em; height: 4em; border-radius: 2em;
+        margin: auto;
+        object-position: center center;
+        object-fit: cover;
+      }
+    }
+
+    .bloc {
+      flex: 1;
+      .intitule { text-align: center; }
+      .agent {
+        text-align: center;
+        font-weight: bold;
+        &[data-origin="MNHN"], &[data-origin="IRD"] { color: #ff0000; }
+        &[data-status="HP"] { color: #ff00ff; }
+      }
+    }
+
+    &.chef {
+      border: 1px solid clr("border");
+      margin: -1px 0 0 0;
+      .bloc > .intitule { 
+        background-color: clr("secondary"); 
+        color: clr("text"); 
+        border-left: 1px solid clr("border");
+        border-bottom: 1px solid clr("border");
+        padding: 0.5em;
+      }
+      .bloc > .agent { background: clr("text"); border-left: 1px solid clr("border"); padding: 0.5em; }
+    }
+  }
+}
