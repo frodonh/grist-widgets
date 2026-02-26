@@ -1,4 +1,47 @@
 let timeoutid;
+let options = {
+	boxwidth: "30",
+	bcolorm: "#4aabc5",
+	colorm: "#fff",
+	bcolor1: "#9bbb59",
+	color1: "#fff",
+	bcolor2: "#e36b09",
+	color2: "#fff",
+	bcolor3: "#4e80bc",
+	color3: "#fff"
+}
+let stylesheet;
+
+function optionChangeEvent(obj) {
+	let name = obj.name;
+	options[name] = obj.value;
+	let nvalue = (name == "boxwidth") ? (options[name] + 'em') : options[name];
+	let root = document.querySelector(":root");
+	root.style.setProperty('--' + name, nvalue);
+	grist.setOptions(options);
+}
+
+function applyOptions() {
+	let root = document.querySelector(":root");
+	for (let [key, value] of Object.entries(options)) {
+		if (key == "boxwidth") value = value + "em";
+		root.style.setProperty('--' + key, value);
+	}
+}
+
+function closeTooltip(event) {
+	if (timeoutid != 0) {
+		clearTimeout(timeoutid);
+		timeoutid = 0;
+	}
+	timeoutid=setTimeout(function() {
+		let tt = document.getElementsByClassName('orgtooltip')[0];
+		tt.style.display = 'none';
+		let img = tt.getElementsByTagName('img')[0];
+		img.setAttribute('src','//:0');
+	}, 1000);
+}
+
 function filter(row) {
 	return true;
 }
@@ -56,20 +99,20 @@ class Agent {
 			});
 			let bphoto = this.big_photo;
 			if (bphoto) {
-				img.addEventListener("mouseover",function(event) {
+				img.addEventListener("mouseover", (event) => {
 					if (timeoutid != 0) {
 						clearTimeout(timeoutid);
 						timeoutid = 0;
 					}
-					let tt = document.getElementById('orgtooltipid');
-					let imgs = this;
-					let src = bphoto;
-					let img = tt.getElementsByTagName('img')[0];
-					img.setAttribute('src',src);
-					timeoutid=setTimeout(function() {
+					let tt = document.getElementsByClassName('orgtooltip')[0];
+					tt.getElementsByTagName('img')[0].setAttribute('src', bphoto);
+					tt.getElementsByClassName('nom')[0].innerHTML = `${this.fname} ${this.name}`;
+					tt.getElementsByClassName('email')[0].innerHTML = `Email : <a href="mailto:${this.email}">${this.email}</a>`;
+					tt.getElementsByClassName('site')[0].innerHTML = `Site : ${this.site}`;
+					timeoutid=setTimeout(() => {
 						let parentorg = document.getElementById('organigramme');
-						tt.style.display = 'block';
-						let offsets = offsetRelative(imgs, parentorg);
+						tt.style.display = 'flex';
+						let offsets = offsetRelative(img, parentorg);
 						let offsetX = event.offsetX;
 						let offsetY = event.offsetY;
 						if (offsetX === undefined || (offsetX == 0 && offsetY == 0)) {
@@ -90,18 +133,6 @@ class Agent {
 						tt.style.left = ol.toString()+"px";
 						tt.style.top = ot.toString()+"px";
 					},100);
-				});
-				img.addEventListener("mouseout",function() {
-					if (timeoutid != 0) {
-						clearTimeout(timeoutid);
-						timeoutid = 0;
-					}
-					timeoutid=setTimeout(function() {
-						let tt = document.getElementById('orgtooltipid');
-						tt.style.display = 'none';
-						let img = tt.getElementsByTagName('img')[0];
-						img.setAttribute('src','//:0');
-					},1000);
 				});
 			}
 			figure.appendChild(img);
@@ -278,74 +309,84 @@ class Entity {
 }
 
 ready(function() {
-	grist.ready({requiredAccess: 'read table', columns: [
-		{
-			name: "nom",
-			title: "Nom de l'employé",
-			type: "Text",
-			optional: false,
-			allowMultiple: false
-		},
-		{
-			name: "prenom",
-			title: "Prénom de l'employé",
-			type: "Text",
-			optional: false,
-			allowMultiple: false
-		},
-		{
-			name: "email",
-			title: "Email de l'employé",
-			type: "Text",
-			optional: true
-		},
-		{
-			name: "poste",
-			title: "Intitulé du poste",
-			type: "Text",
-			optional: true
-		},
-		{
-			name: "site",
-			title: "Lieu de travail",
-			type: "Text",
-			optional: true
-		},
-		{
-			name: "entite",
-			title: "Entité à laquelle appartient l'employé",
-			type: "Ref",
-			optional: false,
-			allowMultiple: false
-		},
-		{
-			name: "parent",
-			title: "Entité supérieure de celle à laquelle appartient l'employé",
-			type: "Ref",
-			optional: false,
-			allowMultiple: false
-		},
-		{
-			name: "position",
-			title: "Indique si l'employé est chef, adjoint ou singleton dans son entité",
-			description: "Valeurs possibles : ['Chef', 'Adjoint', 'Singleton']",
-			type: "Text",
-			optional: false,
-			allowMultiple: false
-		},
-		{
-			name: "petite_photo",
-			title: "URL d'une photo miniature",
-			type: "Attachments",
-			optional: true
-		},
-		{
-			name: "grande_photo",
-			title: "URL d'une grande photo",
-			type: "Attachments",
-			optional: true
-		}
-	]});
+	for (let sheet of document.styleSheets) if (sheet.title == "main") stylesheet = sheet;
+	grist.getOptions().then((opt)=>{
+		console.log(JSON.stringify(opt));
+		if (opt) options = opt;
+		applyOptions();	
+	});
+	grist.ready({
+		requiredAccess: 'read table', 
+		columns: [
+			{
+				name: "nom",
+				title: "Nom de l'employé",
+				type: "Text",
+				optional: false,
+				allowMultiple: false
+			},
+			{
+				name: "prenom",
+				title: "Prénom de l'employé",
+				type: "Text",
+				optional: false,
+				allowMultiple: false
+			},
+			{
+				name: "email",
+				title: "Email de l'employé",
+				type: "Text",
+				optional: true
+			},
+			{
+				name: "poste",
+				title: "Intitulé du poste",
+				type: "Text",
+				optional: true
+			},
+			{
+				name: "site",
+				title: "Lieu de travail",
+				type: "Text",
+				optional: true
+			},
+			{
+				name: "entite",
+				title: "Entité à laquelle appartient l'employé",
+				type: "Ref",
+				optional: false,
+				allowMultiple: false
+			},
+			{
+				name: "parent",
+				title: "Entité supérieure de celle à laquelle appartient l'employé",
+				type: "Ref",
+				optional: false,
+				allowMultiple: false
+			},
+			{
+				name: "position",
+				title: "Indique si l'employé est chef, adjoint ou singleton dans son entité",
+				description: "Valeurs possibles : ['Chef', 'Adjoint', 'Singleton']",
+				type: "Text",
+				optional: false,
+				allowMultiple: false
+			},
+			{
+				name: "petite_photo",
+				title: "URL d'une photo miniature",
+				type: "Attachments",
+				optional: true
+			},
+			{
+				name: "grande_photo",
+				title: "URL d'une grande photo",
+				type: "Attachments",
+				optional: true
+			}
+		],
+		onEditOptions: function() { document.getElementById("configuration").showModal(); }
+	});
 
 	grist.onRecord(function(record) {
 	});
@@ -383,11 +424,7 @@ ready(function() {
 			populateEntity(main, "", recs, response);
 
 			// Génération du DOM
-			let tooltip = document.createElement('div');
-			tooltip.id = 'orgtooltipid';
-			let timg = document.createElement('img');
-			timg.setAttribute('src','//:0');
-			tooltip.appendChild(timg);
+			let tooltip = document.getElementById("template-tooltip").content.cloneNode(true);
 			let node = document.getElementById("organigramme");
 			node.innerHTML = "";
 			node.appendChild(tooltip);
@@ -395,7 +432,4 @@ ready(function() {
 		});
 	});
 
-	grist.onOptions((options) => {
-		document.getElementById('Titre').innerHTML = options.titre || "Organigramme";
-	});
 });

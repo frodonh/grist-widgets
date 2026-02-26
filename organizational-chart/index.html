@@ -5,10 +5,64 @@
 		<title>Grist organizational chart</title>
 		<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 		<script src="organizational-chart.js"></script>
-		<link rel="stylesheet" href="organizational-chart.css" />
+		<link rel="stylesheet" title="main" href="organizational-chart.css" />
 	</head>	
 	<body>
-		<h1 id="Titre"></h1>
+		<h1 id="titre"></h1>
+		<template id="template-tooltip">
+			<div class="orgtooltip" onmouseleave="closeTooltip()">
+				<figure>
+					<img src="//:0" />
+				</figure>
+				<div>
+					<div class="nom"></div>
+					<div class="email">Email : </div>
+					<div class="site">Site : </div>
+				</div>
+			</div>
+		</template>
 		<div id="organigramme" style="font-size: 0.8em; overflow: auto"></div>
+		<dialog id="configuration">
+			<h1>Options de l'organigramme</h1>
+			<form action="" method="dialog">
+				<div class="parameter">
+					<label for="boxwidth">Largeur des blocs</label>
+					<input type="range" name="boxwidth" min="10" max="100" value="30" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="bcolorm">Couleur de fond des managers</label>
+					<input type="color" name="bcolorm" value="#4aabc5" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="colorm">Couleur du texte des managers</label>
+					<input type="color" name="colorm" value="#fff" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="bcolor1">Couleur du niveau 1</label>
+					<input type="color" name="bcolor1" value="#9bbb59" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="color1">Couleur du texte de niveau 1</label>
+					<input type="color" name="color1" value="#fff" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="bcolor2">Couleur du niveau 2</label>
+					<input type="color" name="bcolor2" value="#e36b09" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="color2">Couleur du texte de niveau 2</label>
+					<input type="color" name="color2" value="#fff" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="bcolor3">Couleur du niveau 3</label>
+					<input type="color" name="bcolor3" value="#4e80bc" onchange="optionChangeEvent(this)" />
+				</div>
+				<div class="parameter">
+					<label for="color3">Couleur du texte de niveau 3</label>
+					<input type="color" name="color3" value="#fff" onchange="optionChangeEvent(this)" />
+				</div>
+				<button command="close" onclick="this.parentNode.parentNode.close()">X</button>
+			</form>
+		</div>
 	</body>
 </html>

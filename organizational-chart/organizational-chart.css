@@ -1,14 +1,44 @@
 @charset "UTF-8";
-#orgtooltipid {
+:root {
+  --bcolor1: #9bbb59;
+  --bcolorm: #4aabc5;
+  --bcolor2: #e36b09;
+  --bcolor3: #4e80bc;
+  --border: #006666;
+  --color1: #fff;
+  --color2: #fff;
+  --color3: #fff;
+  --shadow: #000000;
+  --boxwidth: 30em;
+}
+
+div.orgtooltip {
   position: absolute;
   display: none;
-  box-shadow: 5px 5px 10px #000000;
+  box-shadow: 5px 5px 10px var(--shadow);
   z-index: 10;
+  flex-flow: row nowrap;
+  flex: auto;
+  align-content: middle;
+  background-color: white;
 }
-#orgtooltipid img {
-  max-width: 30em;
+div.orgtooltip figure {
+  width: 10em;
+}
+div.orgtooltip figure img {
+  max-width: 100%;
+  max-height: 20em;
   vertical-align: middle;
   margin: 0;
+}
+div.orgtooltip div {
+  margin: 1em;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-items: space-evenly;
+}
+div.orgtooltip div .nom {
+  font: 1.4rem bold sans-serif;
 }
 
 #organigramme {
@@ -28,12 +58,12 @@
 }
 #organigramme .entite > .nom {
   text-align: center;
-  background-color: #9bbb59;
-  border: 1px solid #006666;
-  color: #ffffff;
+  background-color: var(--bcolor1);
+  border: 1px solid var(--border);
+  color: var(--color1);
   padding: 0.5em 1.5em;
   font-weight: bold;
-  width: 30em;
+  width: var(--boxwidth);
   margin: 0 auto;
   position: relative;
 }
@@ -41,20 +71,20 @@
   position: absolute;
   width: 1.5em;
   height: 1.5em;
-  border: 1px solid #ffffff;
+  border: 1px solid var(--color1);
   border-radius: 0.2em;
   text-align: center;
 }
 #organigramme .entite > .nom .button:hover {
   box-shadow: 2px 2px 4px 2px gray;
-  background-color: #ffffff;
+  background-color: var(--color1);
 }
 #organigramme .entite > .nom .button:hover a {
-  color: #9bbb59;
+  color: var(--bcolor1);
 }
 #organigramme .entite > .nom .button a {
   text-decoration: none;
-  color: #ffffff;
+  color: var(--color1);
   padding: 0.1em;
 }
 #organigramme .entite > .nom .button.fold {
@@ -72,20 +102,22 @@
   content: "+";
 }
 #organigramme .entite .entite > .nom {
-  background-color: #e36b09;
+  background-color: var(--bcolor2);
+  color: var(--color2);
 }
 #organigramme .entite .entite > .nom .button:hover a {
-  color: #e36b09;
+  color: var(--bcolor2);
 }
 #organigramme .entite .entite .entite > .nom {
-  background-color: #4e80bc;
+  background-color: var(--bcolor3);
+  color: var(--color3);
 }
 #organigramme .entite .entite .entite > .nom .button:hover a {
-  color: #4e80bc;
+  color: var(--bcolor3);
 }
 #organigramme .entite > .direction {
   margin: 0 auto 1em auto;
-  width: 30em;
+  width: var(--boxwidth);
   position: relative;
 }
 #organigramme .entite > .direction .shtop {
@@ -93,7 +125,7 @@
   width: 1px;
   height: 1em;
   right: 50%;
-  border-right: 1px solid #006666;
+  border-right: 1px solid var(--border);
   top: 100%;
 }
 #organigramme .entite > .contenu {
@@ -104,13 +136,13 @@
 }
 #organigramme .entite > .contenu > .bloc {
   margin: 1em 0;
-  width: 30em;
+  width: var(--boxwidth);
   position: relative;
 }
 #organigramme .entite > .contenu > .bloc > .intitule {
-  background-color: #4aabc5;
-  border: 1px solid #006666;
-  color: #ffffff;
+  background-color: var(--bcolorm);
+  border: 1px solid var(--border);
+  color: var(--color1);
   text-align: center;
   padding: 0.5em 0.1em;
   font-weight: bold;
@@ -118,14 +150,14 @@
 #organigramme .entite > .contenu > .bloc > .contenu {
   width: 100%;
   margin-top: -1px;
-  border: 1px solid #006666;
+  border: 1px solid var(--border);
 }
 #organigramme .entite > .contenu > .bloc > .shadow {
   position: absolute;
   width: 1px;
   height: 1em;
   right: 50%;
-  border-right: 1px solid #006666;
+  border-right: 1px solid var(--border);
   bottom: 100%;
 }
 #organigramme .entite > .shbottom {
@@ -133,11 +165,11 @@
   bottom: 100%;
   width: calc(50% + 1em);
   height: 2em;
-  border-top: 1px solid #006666;
+  border-top: 1px solid var(--border);
 }
 #organigramme .entite > .shbottom.left {
   right: 50%;
-  border-right: 1px solid #006666;
+  border-right: 1px solid var(--border);
 }
 #organigramme .entite > .shbottom.right {
   left: 50%;
@@ -170,7 +202,7 @@
   width: 1px;
   height: 100%;
   right: 50%;
-  border-right: 1px solid #006666;
+  border-right: 1px solid var(--border);
 }
 #organigramme .singletons .singletonb {
   width: 50%;
@@ -178,30 +210,30 @@
   margin: 1em 0;
 }
 #organigramme .singletons .singletonb .singleton {
-  width: 30em;
+  width: var(--boxwidth);
   margin: 0;
 }
 #organigramme .singletons .singletonb .singleton .contenu > .bloc > .contenu {
-  border: 1px solid #006666;
+  border: 1px solid var(--border);
   margin-top: -1px;
 }
 #organigramme .singletons .singletonb .shadow {
   position: absolute;
   bottom: 100%;
-  border-top: 1px solid #006666;
-  width: calc(100% - 1em - 30em / 2);
+  border-top: 1px solid var(--border);
+  width: calc(100% - 1em - var(--boxwidth) / 2);
   height: 1em;
 }
 #organigramme .singletons .singletonb:nth-of-type(odd) .shadow {
-  right: calc(1em + 30em / 2);
-  border-right: 1px solid #006666;
+  right: calc(1em + var(--boxwidth) / 2);
+  border-right: 1px solid var(--border);
 }
 #organigramme .singletons .singletonb:nth-of-type(odd) .singleton {
   margin: 0 1em 0 auto;
 }
 #organigramme .singletons .singletonb:nth-of-type(even) .shadow {
-  left: calc(1em + 30em / 2);
-  border-left: 1px solid #006666;
+  left: calc(1em + var(--boxwidth) / 2);
+  border-left: 1px solid var(--border);
 }
 #organigramme .singletons .singletonb:nth-of-type(even) .singleton {
   margin-left: 1em;
@@ -247,18 +279,63 @@
   color: #ff00ff;
 }
 #organigramme .poste.chef {
-  border: 1px solid #006666;
+  border: 1px solid var(--border);
   margin: -1px 0 0 0;
 }
 #organigramme .poste.chef .bloc > .intitule {
-  background-color: #4aabc5;
-  color: #ffffff;
-  border-left: 1px solid #006666;
-  border-bottom: 1px solid #006666;
+  background-color: var(--bcolorm);
+  color: var(--colorm);
+  border-left: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   padding: 0.5em;
 }
 #organigramme .poste.chef .bloc > .agent {
-  background: #ffffff;
-  border-left: 1px solid #006666;
+  background: var(--color1);
+  border-left: 1px solid var(--border);
   padding: 0.5em;
+}
+
+#configuration {
+  background-color: LightBlue;
+  color: black;
+  box-shadow: 5px 5px 10px var(--shadow);
+  border: 1px solid var(--border);
+}
+#configuration::backdrop {
+  background-color: black;
+  opacity: 10%;
+}
+#configuration h1 {
+  font-size: 1.4rem;
+}
+#configuration form {
+  display: flex;
+  flex-flow: column nowrap;
+  flex: auto;
+}
+#configuration form div.parameter {
+  display: flex;
+  flex-flow: row nowrap;
+  flex: auto;
+  align-items: center;
+  margin: 0.5em 0.2em;
+}
+#configuration form div.parameter label {
+  width: 20em;
+}
+#configuration form div.parameter input {
+  width: 20em;
+}
+#configuration form button {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.1em;
+  border: 1px solid white;
+  border-radius: 2px;
+  background-color: azure;
+}
+#configuration form button:hover {
+  background-color: aliceblue;
+  box-shadow: 0 2px 10px 0px rgba(0, 0, 0, 0.3);
 }

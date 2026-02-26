@@ -1,23 +1,18 @@
-@use "sass:map";
-
 // --- 1. Variables & Configuration ---
-$colors: (
-  "primary":   #9bbb59, // Vert (Niveau 1)
-  "secondary": #4aabc5, // Bleu ciel (Blocs/Chefs)
-  "accent":    #e36b09, // Orange (Niveau 2)
-  "deep":      #4e80bc, // Bleu foncé (Niveau 3)
-  "border":    #006666,
-  "text":      #ffffff,
-  "shadow":    #000000
-);
-
-$node-width: 30em;
-$connector-thickness: 1px;
-
-// Fonction utilitaire pour récupérer les couleurs
-@function clr($key) {
-  @return map.get($colors, $key);
+:root {
+  --bcolor1:   #9bbb59; // Vert (Niveau 1)
+  --bcolorm: #4aabc5; // Bleu ciel (Blocs/Chefs)
+  --bcolor2:    #e36b09; // Orange (Niveau 2)
+  --bcolor3:      #4e80bc; // Bleu foncé (Niveau 3)
+  --border:    #006666;
+  --color1:    #fff;
+  --color2:    #fff;
+  --color3:    #fff;
+  --shadow:    #000000;
+  --boxwidth: 30em;
 }
+
+$connector-thickness: 1px;
 
 // --- 2. Mixins (Outils de génération) ---
 
@@ -27,7 +22,7 @@ $connector-thickness: 1px;
   width: $connector-thickness;
   height: $height;
   right: 50%;
-  border-right: $connector-thickness solid clr("border");
+  border-right: $connector-thickness solid var(--border);
   @if $top { top: $top; }
   @if $bottom { bottom: $bottom; }
 }
@@ -41,17 +36,35 @@ $connector-thickness: 1px;
 
 // --- 3. Styles Principaux ---
 
-#orgtooltipid {
+div.orgtooltip {
   position: absolute;
   display: none;
-  box-shadow: 5px 5px 10px clr("shadow");
+  box-shadow: 5px 5px 10px var(--shadow);
   z-index: 10;
+  flex-flow: row nowrap;
+  flex: auto;
+  align-content: middle;
+  background-color: white;
   
-  img {
-    max-width: $node-width;
-    vertical-align: middle;
-    margin: 0;
+  figure {
+    width: 10em;
+    img {
+      max-width: 100%;
+      max-height: 20em;
+      vertical-align: middle;
+      margin: 0;
+    }
   }
+  
+  div {
+    margin: 1em;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-items: space-evenly;
+
+    .nom {font: 1.4rem bold sans-serif;}
+  }
+  
 }
 
 #organigramme {
@@ -70,12 +83,12 @@ $connector-thickness: 1px;
 
     > .nom {
       text-align: center;
-      background-color: clr("primary");
-      border: 1px solid clr("border");
-      color: clr("text");
+      background-color: var(--bcolor1);
+      border: 1px solid var(--border);
+      color: var(--color1);
       padding: 0.5em 1.5em;
       font-weight: bold;
-      width: $node-width;
+      width: var(--boxwidth);
       margin: 0 auto;
       position: relative;
 
@@ -83,16 +96,16 @@ $connector-thickness: 1px;
         position: absolute;
         width: 1.5em;
         height: 1.5em;
-        border: 1px solid clr("text");
+        border: 1px solid var(--color1);
         border-radius: 0.2em;
         text-align: center;
         
         &:hover { 
           box-shadow: 2px 2px 4px 2px gray; 
-          background-color: clr("text");
-          a {color: clr("primary");}
+          background-color: var(--color1);
+          a {color: var(--bcolor1);}
         }
-        a { text-decoration: none; color: clr("text"); padding: 0.1em; }
+        a { text-decoration: none; color: var(--color1); padding: 0.1em; }
 
         &.fold { right: 0.2em; top: 0.1em; @include icon-button("▲"); }
         &.zoom { left: 0.2em; top: 0.1em; @include icon-button("+"); }
@@ -101,17 +114,19 @@ $connector-thickness: 1px;
 
     // Gestion de la hiérarchie des couleurs
     .entite > .nom { 
-      background-color: clr("accent"); 
-      .button:hover a {color: clr("accent");}
+      background-color: var(--bcolor2); 
+      color: var(--color2);
+      .button:hover a {color: var(--bcolor2);}
     }
     .entite .entite > .nom { 
-      background-color: clr("deep"); 
-      .button:hover a {color: clr("deep");}
+      background-color: var(--bcolor3); 
+      color: var(--color3);
+      .button:hover a {color: var(--bcolor3);}
     }
 
     > .direction {
       margin: 0 auto 1em auto;
-      width: $node-width;
+      width: var(--boxwidth);
       position: relative;
       .shtop { @include vertical-line(1em, $top: 100%); }
     }
@@ -124,13 +139,13 @@ $connector-thickness: 1px;
 
       > .bloc {
         margin: 1em 0;
-        width: $node-width;
+        width: var(--boxwidth);
         position: relative;
 
         > .intitule {
-          background-color: clr("secondary");
-          border: 1px solid clr("border");
-          color: clr("text");
+          background-color: var(--bcolorm);
+          border: 1px solid var(--border);
+          color: var(--color1);
           text-align: center;
           padding: 0.5em 0.1em;
           font-weight: bold;
@@ -139,7 +154,7 @@ $connector-thickness: 1px;
         > .contenu {
           width: 100%;
           margin-top: -1px;
-          border: 1px solid clr("border");
+          border: 1px solid var(--border);
         }
 
         > .shadow { @include vertical-line(1em, $bottom: 100%); }
@@ -152,9 +167,9 @@ $connector-thickness: 1px;
       bottom: 100%;
       width: calc(50% + 1em);
       height: 2em;
-      border-top: $connector-thickness solid clr("border");
+      border-top: $connector-thickness solid var(--border);
 
-      &.left { right: 50%; border-right: $connector-thickness solid clr("border"); }
+      &.left { right: 50%; border-right: $connector-thickness solid var(--border); }
       &.right { left: 50%; }
     }
 
@@ -193,26 +208,26 @@ $connector-thickness: 1px;
       margin: 1em 0;
 
       .singleton {
-        width: $node-width;
+        width: var(--boxwidth);
         margin: 0;
-        .contenu > .bloc > .contenu { border: 1px solid clr("border"); margin-top: -1px; }
+        .contenu > .bloc > .contenu { border: 1px solid var(--border); margin-top: -1px; }
       }
 
       .shadow {
         position: absolute;
         bottom: 100%;
-        border-top: $connector-thickness solid clr("border");
-        width: calc(100% - 1em - (#{$node-width} / 2));
+        border-top: $connector-thickness solid var(--border);
+        width: calc(100% - 1em - var(--boxwidth) / 2);
         height: 1em;
       }
 
       &:nth-of-type(odd) {
-        .shadow { right: calc(1em + (#{$node-width} / 2)); border-right: $connector-thickness solid clr("border"); }
+        .shadow { right: calc(1em + var(--boxwidth) / 2); border-right: $connector-thickness solid var(--border); }
         .singleton { margin: 0 1em 0 auto; }
       }
 
       &:nth-of-type(even) {
-        .shadow { left: calc(1em + (#{$node-width} / 2)); border-left: $connector-thickness solid clr("border"); }
+        .shadow { left: calc(1em + var(--boxwidth) / 2); border-left: $connector-thickness solid var(--border); }
         .singleton { margin-left: 1em; }
       }
     }
@@ -255,16 +270,65 @@ $connector-thickness: 1px;
     }
 
     &.chef {
-      border: 1px solid clr("border");
+      border: 1px solid var(--border);
       margin: -1px 0 0 0;
       .bloc > .intitule { 
-        background-color: clr("secondary"); 
-        color: clr("text"); 
-        border-left: 1px solid clr("border");
-        border-bottom: 1px solid clr("border");
+        background-color: var(--bcolorm); 
+        color: var(--colorm); 
+        border-left: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
         padding: 0.5em;
       }
-      .bloc > .agent { background: clr("text"); border-left: 1px solid clr("border"); padding: 0.5em; }
+      .bloc > .agent { background: var(--color1); border-left: 1px solid var(--border); padding: 0.5em; }
+    }
+  }
+}
+
+#configuration {
+  background-color: LightBlue;
+  color: black;
+  box-shadow: 5px 5px 10px var(--shadow);
+  border: 1px solid var(--border);
+
+  &::backdrop {
+    background-color: black;
+    opacity: 10%;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  form {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: auto;
+
+    div.parameter {
+      display: flex;
+      flex-flow: row nowrap;
+      flex: auto;
+      align-items: center;
+      margin: 0.5em 0.2em;
+
+      label { width: 20em; }
+      input { width: 20em; }
+    }
+
+    button {
+      position: absolute;
+      top: 0.2em;
+      right: 0.2em;
+      padding: 0.1em;
+      border: 1px solid white;
+      border-radius: 2px;
+      background-color: azure;
+
+      &:hover {
+          background-color: aliceblue;
+          box-shadow: 0 2px 10px 0px rgba(0,0,0,0.3);
+      }
+
     }
   }
 }
