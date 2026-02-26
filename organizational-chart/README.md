@@ -48,4 +48,7 @@ La table "Employés" doit quant à elle avoir la structure suivante :
 Les widgets Grist étant rattachés principalement à une unique table, il est alors recommandé de créer deux champs formule dans la table Employés :
 
 - Entité parente : référence vers l'entité parente de l'entité d'appartenance de l'employé. La formule à utiliser est du type `=$Entite.Parent`
-- Position : indique si l'employé est chef de son entité, adjoint au chef, ou singleton. Les valeurs possibles sont "Chef", "Adjoint", et "Singleton". Une formule du type suivant permet de déduire cette position depuis la table des employés : `"Chef" if $Entite.Responsable.id == $id else "Adjoint" if $id in $Entite.Adjoints else "Singleton" if $id in $Entite.Singletons else ""`
+- Position : indique si l'employé est chef de son entité, adjoint au chef, ou singleton. Les valeurs possibles sont "Chef", "Adjoint", et "Singleton". Une formule du type suivant permet de déduire cette position depuis la table des employés : 
+```
+="Chef" if $Entite.Responsable.id == $id else "Adjoint" if $id in $Entite.Adjoints else "Singleton" if $id in $Entite.Singletons else ""
+```
