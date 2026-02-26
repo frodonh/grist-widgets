@@ -2,7 +2,7 @@
 
 Ce widget Grist permet de représenter des organigrammes d'entreprises.
 
-![Copie d'écran d'un organigramme généré](/screenshot.png?raw=true "Un organigramme généré sous Grist")
+![Copie d'écran d'un organigramme généré](/organizational-chart/screenshot.png?raw=true "Un organigramme généré sous Grist")
 
 ## Fonctionnalités
 
